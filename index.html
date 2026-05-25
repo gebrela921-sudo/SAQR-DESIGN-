@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الهدي</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#060d1a;color:#e2e8f0;font-family:Arial,Tahoma,sans-serif;direction:rtl}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#c9943344;border-radius:2px}
+button{cursor:pointer;font-family:inherit}
+input,textarea,select{font-family:inherit;font-size:14px}
+
+/* ── Variables ── */
+:root{
+  --bg:#060d1a;--c1:#0b1526;--c2:#0e1c34;--brd:#1c2e4a;
+  --gld:#c99433;--grn:#22c55e;--red:#ef4444;--blu:#3b82f6;
+  --pnk:#ec4899;--txt:#e2e8f0;--dim:#64748b;--sub:#94a3b8
+}
+
+/* ── Layout ── */
+.page{display:none}
+.page.active{display:block}
+.wrap{max-width:920px;margin:0 auto;padding:14px 12px}
+.card{background:var(--c1);border:1px solid var(--brd);border-radius:14px;padding:16px}
+
+/* ── Nav ── */
+#nav{display:none;background:var(--c1);border-bottom:1px solid var(--brd);
+  position:sticky;top:0;z-index:99;height:52px;
+  align-items:center;justify-content:space-between;padding:0 12px}
+
+/* ── Inputs ── */
+.inp{background:var(--c2);border:1.5px solid var(--brd);color:var(--txt);
+  border-radius:9px;padding:9px 13px;width:100%;outline:none;font-size:14px}
+.inp:focus{border-color:var(--gld)}
+.lbl{color:var(--sub);font-size:12px;display:block;margin-bottom:4px}
+
+/* ── Buttons ── */
+.btn{border-radius:9px;font-weight:700;padding:9px 18px;font-size:14px;border:none;cursor:pointer;font-family:inherit}
+.btn-gold{background:linear-gradient(135deg,#c99433,#7a5a1a);color:#060d1a}
+.btn-out{background:transparent;color:var(--dim);border:1px solid var(--brd)}
+.btn-red{background:#7f1d1d;color:#fca5a5}
+.btn-blu{background:#1e3a5f;color:#93c5fd}
+.btn-grn{background:#14532d;color:#86efac}
+.btn-pnk{background:#ec489918;color:var(--pnk);border:1px solid #ec489944}
+.btn:hover{opacity:.9}
+
+/* ── Overlay ── */
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:16px}
+.ovl.show{display:flex}
+.modal{background:var(--c1);border:1px solid var(--brd);border-radius:18px;
+  padding:26px;width:100%;max-width:340px}
+
+/* ── Toast ── */
+#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:999;
+  background:var(--c2);border:1px solid var(--gld);color:#fff;border-radius:12px;
+  padding:10px 22px;font-weight:700;white-space:nowrap;pointer-events:none;
+  display:none;box-shadow:0 8px 30px rgba(0,0,0,.6)}
+
+/* ── Ham drop ── */
+#ham-drop{display:none;position:absolute;top:calc(100% + 6px);left:0;
+  min-width:190px;background:var(--c1);border:1px solid var(--brd);
+  border-radius:12px;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,.7);z-index:99}
+#ham-drop.show{display:block}
+.hi{display:flex;align-items:center;gap:9px;width:100%;text-align:right;
+  background:transparent;color:var(--sub);border:none;
+  border-bottom:1px solid var(--brd);padding:11px 13px;font-size:13px;
+  font-weight:700;cursor:pointer;font-family:inherit}
+.hi:hover{background:var(--c2);color:var(--gld)}
+
+/* ── Days grid ── */
+#days-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px}
+.dcard{background:var(--c1);border:1px solid var(--brd);border-radius:13px;
+  padding:11px;cursor:pointer;transition:transform .15s;position:relative}
+.dcard:hover{transform:translateY(-2px)}
+
+/* ── Task rows ── */
+.trow{display:flex;align-items:center;gap:11px;padding:11px 14px;
+  cursor:pointer;border-bottom:1px solid rgba(28,46,74,.5)}
+.trow:hover{background:rgba(201,148,51,.06)}
+.trow:last-child{border-bottom:none}
+
+/* ── Feed ── */
+.post{background:var(--c1);border:1px solid var(--brd);border-radius:14px;margin-bottom:11px;overflow:hidden}
+.pact{border-top:1px solid var(--brd);display:flex}
+.pact-btn{flex:1;background:transparent;color:var(--dim);border:none;
+  padding:10px 0;font-size:12px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:5px;font-family:inherit}
+.pact-btn:hover{background:var(--c2);color:var(--gld)}
+
+/* ── Auth steps dots ── */
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:12px}
+
+/* ── Upload btn ── */
+.up-btn{background:var(--c2);border:1px solid var(--brd);border-radius:8px;
+  padding:7px 12px;font-size:12px;color:var(--sub);cursor:pointer;font-weight:700;font-family:inherit}
+.up-btn:hover{border-color:var(--gld);color:var(--gld)}
+
+/* ── Pill ── */
+.pill{display:inline-block;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700}
+
+/* ── Stat box ── */
+.stat{border-radius:11px;padding:8px 12px;text-align:center}
+
+/* ── Progress bar ── */
+.pbar{background:var(--brd);border-radius:4px;height:4px;flex:1}
+.pbar-fill{height:4px;border-radius:4px;background:linear-gradient(90deg,#22c55e,#c99433);transition:width .5s}
+
+/* ── Admin bar ── */
+#admin-bar{display:none;background:#7f1d1d;color:#fca5a5;position:sticky;
+  top:52px;z-index:98;padding:10px;font-size:13px;font-weight:700;
+  align-items:center;justify-content:center;gap:12px}
+
+/* ── Auth page centering ── */
+#page-auth{display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:16px}
+#auth-wrap{width:100%;max-width:430px}
+</style>
+</head>
+<body>
+
+<!-- FILE INPUTS (top level, outside everything) -->
+<input type="file" id="fi-img" accept="image/*" style="display:none">
+<input type="file" id="fi-vid" accept="video/*" style="display:none">
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- CONFIRM OVERLAY -->
+<div class="ovl" id="ovl-cf">
+  <div class="modal">
+    <div style="font-size:32px;text-align:center;margin-bottom:10px">⚠️</div>
+    <p id="cf-msg" style="font-size:15px;font-weight:700;text-align:center;margin-bottom:18px;line-height:1.6;color:var(--txt)"></p>
+    <div style="display:flex;gap:9px">
+      <button class="btn btn-out" style="flex:1;padding:11px 0" onclick="cfNo()">لا، إلغاء</button>
+      <button class="btn btn-red" style="flex:1;padding:11px 0" onclick="cfYes()">نعم، تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHARE OVERLAY -->
+<div class="ovl" id="ovl-share">
+  <div class="modal" style="max-width:360px">
+    <div style="font-weight:900;color:var(--gld);font-size:17px;margin-bottom:14px">↗️ مشاركة المنشور</div>
+    <p id="share-txt" style="background:var(--c2);border-radius:10px;padding:12px;margin-bottom:14px;
+      color:var(--sub);font-size:13px;line-height:1.7;max-height:100px;overflow:hidden"></p>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <button class="btn btn-blu" style="padding:11px 0;font-size:14px" onclick="doCopy()">📋 نسخ نص المنشور</button>
+      <button class="btn btn-out" style="padding:11px 0;font-size:14px" onclick="closeOvl('ovl-share')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div style="display:flex;align-items:center;gap:9px;cursor:pointer" onclick="go('home')">
+    <svg width="26" height="26" viewBox="0 0 100 100" fill="none">
+      <path d="M50 10 A40 40 0 1 0 90 50 A28 28 0 1 1 50 10Z" fill="#c99433" opacity=".92"/>
+      <polygon points="38,38 40.5,46 48,46 42,50.5 44.5,58.5 38,54 31.5,58.5 34,50.5 28,46 35.5,46" fill="#f0c86a" opacity=".9"/>
+    </svg>
+    <div>
+      <div style="font-weight:900;font-size:17px;color:var(--gld);letter-spacing:2px">الهدي</div>
+      <div style="font-size:8px;color:var(--dim);letter-spacing:3px">AL-HADI</div>
+    </div>
+  </div>
+  <div style="position:relative" id="ham-wrap">
+    <button id="ham-btn" onclick="toggleHam()"
+      style="background:transparent;border:1px solid var(--brd);color:var(--sub);
+      width:38px;height:38px;border-radius:9px;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:4px;padding:0">
+      <span style="display:block;width:16px;height:2px;background:currentColor;border-radius:2px"></span>
+      <span style="display:block;width:16px;height:2px;background:currentColor;border-radius:2px"></span>
+      <span style="display:block;width:16px;height:2px;background:currentColor;border-radius:2px"></span>
+    </button>
+    <div id="ham-drop">
+      <div id="ham-user" style="padding:11px 13px;background:var(--c2);border-bottom:1px solid var(--brd);display:flex;gap:9px;align-items:center"></div>
+      <button class="hi" onclick="goHam('home')">🏠 الرئيسية</button>
+      <button class="hi" onclick="goHam('forum')">💬 المجتمع</button>
+      <button class="hi" onclick="goHam('profile')">👤 ملفي الشخصي</button>
+      <button class="hi" id="nav-admin" style="display:none" onclick="goHam('admin')">🛡️ لوحة الإدارة</button>
+      <button class="hi" style="color:var(--red)" onclick="closeHam();askLogout()">🚪 تسجيل الخروج</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ADMIN BAR -->
+<div id="admin-bar">
+  <span id="admin-bar-name"></span>
+  <button class="btn btn-out" style="background:rgba(255,255,255,.15);color:#fff;padding:5px 12px;font-size:12px;border:none" onclick="returnAdmin()">🔙 رجوع للمشرف</button>
+</div>
+
+<!-- ════ AUTH PAGE ════ -->
+<div class="page active" id="page-auth">
+  <div id="auth-wrap">
+    <div style="text-align:center;padding-bottom:22px">
+      <svg width="64" height="64" viewBox="0 0 100 100" fill="none" style="margin-bottom:10px">
+        <path d="M50 10 A40 40 0 1 0 90 50 A28 28 0 1 1 50 10Z" fill="#c99433" opacity=".92"/>
+        <polygon points="68,16 70,22 76,22 71,26 73,32 68,28 63,32 65,26 60,22 66,22" fill="#f0c86a"/>
+        <polygon points="38,38 40.5,46 48,46 42,50.5 44.5,58.5 38,54 31.5,58.5 34,50.5 28,46 35.5,46" fill="#f0c86a" opacity=".9"/>
+      </svg>
+      <div style="font-size:34px;font-weight:900;color:var(--gld);letter-spacing:3px">الهدي</div>
+      <div style="color:var(--dim);font-size:10px;letter-spacing:4px;margin-top:2px">AL-HADI</div>
+      <div style="color:var(--sub);font-size:12px;margin-top:6px">رحلتك الروحية في ثلاثين يوماً مباركاً</div>
+    </div>
+    <div class="card" style="border-radius:20px;padding:24px">
+      <!-- Auth Tabs -->
+      <div id="auth-tabs" style="display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:18px;gap:3px">
+        <button id="tab-login" class="btn" style="flex:1;padding:9px 0;border-radius:8px;background:var(--gld);color:var(--bg);font-size:14px" onclick="authTab('login')">تسجيل الدخول</button>
+        <button id="tab-reg" class="btn" style="flex:1;padding:9px 0;border-radius:8px;background:transparent;color:var(--dim);font-size:14px" onclick="authTab('reg')">حساب جديد</button>
+      </div>
+      <!-- Error box -->
+      <div id="auth-err" style="display:none;background:rgba(127,29,29,.2);border:1px solid rgba(239,68,68,.3);color:#fca5a5;border-radius:9px;padding:9px 13px;margin-bottom:12px;font-size:13px"></div>
+
+      <!-- LOGIN FORM -->
+      <div id="form-login">
+        <div style="margin-bottom:11px">
+          <label class="lbl">البريد الإلكتروني</label>
+          <input class="inp" id="l-email" type="email" placeholder="example@mail.com">
+        </div>
+        <div style="margin-bottom:11px">
+          <label class="lbl">كلمة المرور</label>
+          <div style="position:relative">
+            <input class="inp" id="l-pw" type="password" placeholder="••••••" style="padding-left:42px">
+            <button onclick="toggleVis('l-pw','eye-login')" id="eye-login"
+              style="position:absolute;left:10px;top:50%;transform:translateY(-50%);
+              background:transparent;border:none;color:var(--gld);font-size:15px;cursor:pointer">👁️</button>
+          </div>
+        </div>
+        <button class="btn btn-gold" style="width:100%;padding:12px 0;font-size:15px;margin-bottom:11px" onclick="doLogin()">دخول</button>
+        <button onclick="showForgot()" style="background:transparent;border:none;color:var(--gld);
+          font-size:13px;cursor:pointer;text-decoration:underline;width:100%;text-align:center;font-family:inherit">
+          🔑 نسيت كلمة المرور؟
+        </button>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="form-reg" style="display:none">
+        <div style="margin-bottom:10px"><label class="lbl">الاسم الكامل *</label><input class="inp" id="r-name" placeholder="محمد أحمد"></div>
+        <div style="margin-bottom:10px"><label class="lbl">البريد الإلكتروني *</label><input class="inp" id="r-email" type="email" placeholder="example@mail.com"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px">
+          <div><label class="lbl">رقم الهاتف</label><input class="inp" id="r-phone" placeholder="05x"></div>
+          <div><label class="lbl">العمر</label><input class="inp" id="r-age" type="number" placeholder="20"></div>
+        </div>
+        <div style="margin-bottom:10px"><label class="lbl">كلمة المرور *</label><input class="inp" id="r-pw" type="password" placeholder="••••••"></div>
+        <div style="margin-bottom:14px"><label class="lbl">تأكيد كلمة المرور *</label><input class="inp" id="r-pw2" type="password" placeholder="••••••"></div>
+        <button class="btn btn-gold" style="width:100%;padding:12px 0;font-size:15px" onclick="doReg()">إنشاء الحساب</button>
+      </div>
+
+      <!-- FORGOT PASSWORD FORM -->
+      <div id="form-forgot" style="display:none">
+        <div style="text-align:center;margin-bottom:14px">
+          <div style="font-size:28px;margin-bottom:6px">🔐</div>
+          <div style="font-weight:900;color:var(--gld);font-size:16px">استعادة كلمة المرور</div>
+        </div>
+        <!-- Step dots -->
+        <div style="display:flex;justify-content:center;gap:8px;margin-bottom:16px">
+          <div id="dot1" class="step-dot" style="background:var(--gld);color:var(--bg)">1</div>
+          <div id="dot2" class="step-dot" style="background:var(--brd);color:var(--dim)">2</div>
+          <div id="dot3" class="step-dot" style="background:var(--brd);color:var(--dim)">3</div>
+        </div>
+        <!-- Step 1 -->
+        <div id="fg-s1">
+          <div style="color:var(--sub);font-size:12px;text-align:center;margin-bottom:12px">أدخل بريدك الإلكتروني لاستلام كود التحقق</div>
+          <div style="margin-bottom:12px"><label class="lbl">البريد الإلكتروني</label><input class="inp" id="fg-email" type="email" placeholder="example@mail.com"></div>
+          <button class="btn btn-gold" style="width:100%;padding:12px 0;font-size:14px" onclick="fgStep1()">إرسال كود التحقق</button>
+        </div>
+        <!-- Step 2 -->
+        <div id="fg-s2" style="display:none">
+          <div style="color:var(--sub);font-size:12px;text-align:center;margin-bottom:10px">أدخل الكود المرسل إلى بريدك</div>
+          <div id="code-box" style="background:rgba(201,148,51,.12);border:1px solid rgba(201,148,51,.4);
+            border-radius:12px;padding:14px;text-align:center;margin-bottom:12px">
+            <div style="color:var(--sub);font-size:11px;margin-bottom:4px">📧 كود التحقق (للتجربة يظهر هنا)</div>
+            <div id="shown-code" style="color:var(--gld);font-size:28px;font-weight:900;letter-spacing:8px"></div>
+            <div style="color:var(--dim);font-size:10px;margin-top:4px">في التطبيق الحقيقي يُرسل على البريد أو الهاتف</div>
+          </div>
+          <div style="margin-bottom:12px">
+            <label class="lbl">أدخل الكود (6 أرقام)</label>
+            <input class="inp" id="fg-code" maxlength="6" placeholder="000000"
+              style="text-align:center;font-size:22px;letter-spacing:8px;font-weight:900">
+          </div>
+          <button class="btn btn-gold" style="width:100%;padding:12px 0;font-size:14px" onclick="fgStep2()">تحقق من الكود</button>
+          <button onclick="resetFg()" style="background:transparent;border:none;color:var(--dim);
+            font-size:12px;cursor:pointer;text-decoration:underline;width:100%;text-align:center;margin-top:10px;font-family:inherit">
+            ← إعادة الإرسال
+          </button>
+        </div>
+        <!-- Step 3 -->
+        <div id="fg-s3" style="display:none">
+          <div style="color:var(--sub);font-size:12px;text-align:center;margin-bottom:12px">أدخل كلمة المرور الجديدة</div>
+          <div style="margin-bottom:10px"><label class="lbl">كلمة المرور الجديدة</label><input class="inp" id="fg-pw" type="password" placeholder="••••••"></div>
+          <div style="margin-bottom:14px"><label class="lbl">تأكيد كلمة المرور الجديدة</label><input class="inp" id="fg-pw2" type="password" placeholder="••••••"></div>
+          <button class="btn btn-gold" style="width:100%;padding:12px 0;font-size:14px" onclick="fgStep3()">حفظ كلمة المرور الجديدة</button>
+        </div>
+        <button onclick="authTab('login')" style="background:transparent;border:none;color:var(--sub);
+          font-size:12px;cursor:pointer;text-decoration:underline;width:100%;text-align:center;margin-top:12px;font-family:inherit">
+          ← العودة لتسجيل الدخول
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ HOME PAGE ════ -->
+<div class="page" id="page-home">
+  <div class="wrap">
+    <div id="hero" class="card" style="border-radius:18px;padding:20px;margin-bottom:16px;background:linear-gradient(135deg,var(--c2),var(--c1))">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:13px">
+        <div>
+          <div style="color:var(--gld);font-size:11px;letter-spacing:2px;margin-bottom:3px">أهلاً وسهلاً</div>
+          <div id="hero-name" style="font-weight:900;font-size:19px;margin-bottom:11px"></div>
+          <div id="hero-stats" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+        <svg id="hero-ring" width="86" height="86">
+          <circle cx="43" cy="43" r="37" fill="none" stroke="var(--brd)" stroke-width="8"/>
+          <circle id="hero-arc" cx="43" cy="43" r="37" fill="none" stroke="var(--gld)" stroke-width="8"
+            stroke-dasharray="232.48" stroke-dashoffset="232.48" stroke-linecap="round"
+            transform="rotate(-90 43 43)" style="transition:stroke-dashoffset .9s"/>
+          <text id="hero-pct" x="50%" y="50%" text-anchor="middle" dominant-baseline="central"
+            fill="var(--gld)" font-size="14" font-weight="800">0%</text>
+        </svg>
+      </div>
+    </div>
+    <div style="font-weight:900;color:var(--gld);font-size:15px;margin-bottom:11px">📅 الأيام الثلاثون المباركة</div>
+    <div id="days-grid"></div>
+  </div>
+</div>
+
+<!-- ════ DAY PAGE ════ -->
+<div class="page" id="page-day">
+  <div class="wrap" style="max-width:660px">
+    <button class="btn btn-out" style="margin-bottom:13px;padding:7px 14px;font-size:13px" onclick="go('home')">← رجوع</button>
+    <div class="card" style="border-radius:16px;padding:18px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap">
+        <div id="d-icon" style="font-size:40px"></div>
+        <div style="flex:1">
+          <div id="d-title" style="color:var(--gld);font-weight:800;font-size:12px;letter-spacing:1px;margin-bottom:7px"></div>
+          <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+            <span id="d-score" style="color:var(--grn);font-size:21px;font-weight:900">0</span>
+            <span id="d-max" style="color:var(--dim);font-size:12px"></span>
+            <div class="pbar" style="min-width:60px"><div id="d-bar" class="pbar-fill" style="width:0%"></div></div>
+            <svg id="d-ring" width="48" height="48">
+              <circle cx="24" cy="24" r="19" fill="none" stroke="var(--brd)" stroke-width="5"/>
+              <circle id="d-arc" cx="24" cy="24" r="19" fill="none" stroke="var(--blu)" stroke-width="5"
+                stroke-dasharray="119.38" stroke-dashoffset="119.38" stroke-linecap="round"
+                transform="rotate(-90 24 24)" style="transition:stroke-dashoffset .5s"/>
+              <text id="d-pct" x="50%" y="50%" text-anchor="middle" dominant-baseline="central"
+                fill="var(--blu)" font-size="10" font-weight="800">0%</text>
+            </svg>
+          </div>
+        <
